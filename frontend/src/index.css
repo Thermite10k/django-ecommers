@@ -1,4 +1,20 @@
 main{
     min-height: 80vh;
-    background-color: #584b4b;
+    background-color: white;
+}
+.rating{
+    margin: 0.1rem;
+}
+
+h3{
+    padding:1rem 0;
+    
+}
+
+.ProductNptAvailable{
+    color: red;
+
+}
+.ProductAvailable{
+    color: green;
 }
