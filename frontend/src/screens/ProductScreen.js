@@ -1,8 +1,9 @@
-import React from 'react'
+import React, {useState, useEffect} from 'react'
 import {Link, useParams} from 'react-router-dom'
 import {Row, Col, Image, ListGroup, Button, Card, ListGroupItem} from 'react-bootstrap'
 import Rating from '../components/Rating'
-import products from '../products'
+import axios from 'axios'
+//import products from '../products'
 
 
 
@@ -10,11 +11,23 @@ import products from '../products'
 
 function ProductScreen() {
     const match = useParams()
-    const product = products.find((p) => p._id == match.id ) // match .id is from the router
+    const [product, setProduct] = useState([])
+
+    useEffect(() => {
+
+        async function fetchProduct(){
+            const { data } = await axios.get(`/api/products/${match.id}`)
+            setProduct(data)
+        }
+        fetchProduct()
+       
+    }, [])
+    //const match = useParams()
+    //const product = products.find((p) => p._id == match.id ) // match .id is from the router
     return (
         <div>
             
-            <Link to='/' className='btn btn-light my-3'>Go back</Link>
+            <Link to='/' className='btn btn-success my-3'>Go back</Link>
             <Row>
                 <Col md={6}>
                     <Image src={product.image} alt={product.name} fluid/>
@@ -64,9 +77,15 @@ function ProductScreen() {
                             </ListGroup.Item>
 
                             <ListGroup.Item>
-                                <Row>
-                                    <Button disabled={product.countInStock == 0 ? true : false} className='btn-block' type='button'>Add to cart</Button>
-                                </Row>
+                                <Link to='/'>
+                                    <Row>
+                                    
+                                        <Button disabled={product.countInStock == 0 ? true : false} className='btn-block' type='button'>Add to cart</Button>
+                                    
+                                    
+                                    </Row>
+                                </Link>
+
                                 
                             </ListGroup.Item>
                         </ListGroup>
