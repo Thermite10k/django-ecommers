@@ -8,7 +8,10 @@ export default function Product({ product }) {
     <Card className="my-3 p-3 rounded">
       <Link to={`/product/${product._id}`}>
         <Card.Img src={product.image} />
+        
+   
       </Link>
+      
       <Card.Body>
         <Link to={`/product/${product._id}`}>
           <Card.Title as='div'>
