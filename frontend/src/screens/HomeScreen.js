@@ -3,6 +3,8 @@ import { Link, useParams } from "react-router-dom";
 //import products from '../products.js'
 import { Row, Col } from 'react-bootstrap'
 import Product from '../components/Product'
+import Loader from '../components/loader'
+import Message from '../components/message'
 import { useDispatch, useSelector } from 'react-redux';
 import { listProducts } from '../actions/productActions.js';
 ;
@@ -13,8 +15,8 @@ import { listProducts } from '../actions/productActions.js';
 
 function HomeScreen() {
     const dispatch = useDispatch()
-    const productList = useSelector(state => state.productList)
-    const {error, loading, products} = productList
+    const productList = useSelector(state => state.productList) //1  .productList is the reducer form the store.js
+    const {error, loading, products} = productList  //2 productList has an error, loading and a product as a payload.
 
 
     useEffect(() => {
@@ -26,8 +28,8 @@ function HomeScreen() {
     return (
         <div>
             <h1>Latest Products</h1>
-            {loading ? <h2> Loading...</h2>
-                : error ? <h3>{error}</h3>
+            {loading ? <Loader />
+                : error ? <Message variant={'danger'}>{error}</Message>
                     :
                     <Row>
                         {products.map(product => (
