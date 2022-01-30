@@ -1,5 +1,5 @@
 import { bindActionCreators } from 'redux';
-import { CART_ADD_ITEM } from '../constannts/cartConstants';
+import { CART_ADD_ITEM, CART_REMOVE_ITEM} from '../constannts/cartConstants';
 
 
 
@@ -22,6 +22,11 @@ export const cartReducer = (state={cartItems:[]}, action) =>{
                     cartItems:[...state.cartItems, item]
                 }
             }
+
+        case CART_REMOVE_ITEM:
+            return{...state,
+                    cartItems: state.cartItems.filter(x => x.product !== action.payload) // filter keeps every product taht  doesn't match th action.payload ID
+            }    
 
         default:
             return state
