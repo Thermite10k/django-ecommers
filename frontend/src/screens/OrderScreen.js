@@ -4,19 +4,34 @@ import { useParams, useSearchParams, useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { Button, Row, Col, ListGroup, Image, Card } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
-import { ORDER_PAY_RESET } from "../constannts/orderConstants";
+import {
+  ORDER_PAY_RESET,
+  ORDER_DELIVER_RESET,
+} from "../constannts/orderConstants";
 
 import Message from "../components/message";
 import loader from "../components/loader";
 
-import { getOrderDetails, payOrder } from "../actions/orderActions";
+import {
+  getOrderDetails,
+  payOrder,
+  deliverOrder,
+} from "../actions/orderActions";
 import Loader from "../components/loader";
 
 function OrderScreen() {
   const orderDetails = useSelector((state) => state.orderDetails);
   const { order, error, loading } = orderDetails;
+
   const orderPayDetails = useSelector((state) => state.orderPay);
-  const { success } = orderPayDetails;
+  const { success: paySuccess } = orderPayDetails;
+
+  const orderDeliver = useSelector((state) => state.orderDeliver);
+  const { loadnig: loadingDeliver, success: successDeliver } = orderDeliver;
+
+  const userLogin = useSelector((state) => state.userLogin);
+  const { userInfo } = userLogin;
+
   const [pay, setPay] = useState();
 
   const match = useParams();
@@ -34,20 +49,30 @@ function OrderScreen() {
     ).toFixed(2);
   }
   useEffect(() => {
-    if (!order || order._id !== Number(orderId)) {
+    if (!userInfo) {
+      history("/login");
+    }
+    if (!order || order._id !== Number(orderId) || successDeliver) {
       dispatch({ type: ORDER_PAY_RESET });
+      dispatch({ type: ORDER_DELIVER_RESET });
       dispatch(getOrderDetails(orderId));
     }
-    if (order) {
-      setPay(order.isPaid);
+    if (paySuccess) {
+      dispatch({ type: ORDER_PAY_RESET });
+      dispatch(getOrderDetails(orderId));
+      setPay(paySuccess);
     }
-  }, [order, orderId, dispatch, setPay]); //when the function is activated
+  }, [order, orderId, dispatch, setPay, successDeliver, paySuccess]); //when the function is activated
 
   const payorderHandler = () => {
     dispatch(payOrder(orderId));
-    if (success) {
-      setPay(success);
+    if (paySuccess) {
+      setPay(paySuccess);
     }
+  };
+
+  const deliverHandler = () => {
+    dispatch(deliverOrder(order));
   };
 
   return loading ? (
@@ -94,8 +119,10 @@ function OrderScreen() {
 
                 {order.paymentMethod}
               </p>
-              {pay ? (
-                <Message variant="success">Paid on {order.paidAt}</Message>
+              {order.isPaid ? (
+                <Message variant="success">
+                  Paid on {order.paidAt.substring(0, 10)}
+                </Message>
               ) : (
                 <Message variant="warning">Not Paid</Message>
               )}
@@ -174,16 +201,8 @@ function OrderScreen() {
                       type="button"
                       className="btn-block"
                       variant="success"
-                      disabled={pay}
+                      disabled={order.isPaid}
                       onClick={payorderHandler}
-                    >
-                      Pay!
-                    </Button>
-                    <Button
-                      type="button"
-                      className="btn-block"
-                      variant="success"
-                      onClick={showPay}
                     >
                       Pay!
                     </Button>
@@ -191,6 +210,24 @@ function OrderScreen() {
                 </ListGroup.Item>
               </ListGroup.Item>
             </ListGroup>
+            {userInfo &&
+              userInfo.isAdmin &&
+              order.isPaid &&
+              !order.isDelivered && (
+                <ListGroup.Item>
+                  <Row>
+                    {loadingDeliver && <Loader />}
+                    <Button
+                      type="button"
+                      className="btn-block"
+                      variant="success"
+                      onClick={deliverHandler}
+                    >
+                      Mark ad delivered
+                    </Button>
+                  </Row>
+                </ListGroup.Item>
+              )}
           </Card>
         </Col>
       </Row>

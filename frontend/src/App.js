@@ -1,4 +1,4 @@
-//imp
+//imp  OrderListScreen
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import { Container } from "react-bootstrap";
@@ -16,6 +16,7 @@ import UserListScreen from "./screens/UserListScreen";
 import UserEditScreen from "./screens/UserEditScreen";
 import ProductListScreen from "./screens/ProductListScreen";
 import ProductEditScreen from "./screens/ProductEditScreen";
+import OrderListScreen from "./screens/OrderListScreen";
 
 import { HashRouter as Router, Route, Routes } from "react-router-dom";
 //imd
@@ -48,6 +49,7 @@ function App() {
             <Route path="/admin/user/:id/edit" element={<UserEditScreen />} />
 
             <Route path="/admin/productlist" element={<ProductListScreen />} />
+            <Route path="/admin/orderlist" element={<OrderListScreen />} />
             <Route
               path="/admin/product/:id/edit"
               element={<ProductEditScreen />}
