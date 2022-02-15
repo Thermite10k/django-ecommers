@@ -32,7 +32,7 @@ def getProducts(request):
     products = Product.objects.filter(name__icontains=keyword)
     
 
-    paginator = Paginator(products, 3)
+    paginator = Paginator(products, 5)
     
     
 
