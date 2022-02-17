@@ -5,7 +5,7 @@ from django.http import JsonResponse
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.response import Response
-
+from django.core.paginator import Paginator, EmptyPage,PageNotAnInteger
 from base.models import Product, Order, OrderItem, ShippingAddress
 from django.contrib.auth.models import User
 from base.serializer import ProductSerializer, OrderSerializer
@@ -110,10 +110,35 @@ def updateOrderToPaid(request, pk):
 @api_view(['GET'])
 @permission_classes([IsAdminUser])
 def getOrders(request):
+
+    params = request.query_params
+    page = params.get('page')
+    print('page',page)
+
+    if page == 'null' or page == None:
+        page = 1
+
+
    
-    orders = Order.objectst.all()
+    orders = Order.objects.all()
+
+    paginator = Paginator(orders,10)
+
+    try:
+        orders = paginator.page(page)
+    except PageNotAnInteger:
+        orders = paginator.page(1)
+    except EmptyPage:
+        orders = paginator.page(paginator.num_pages)
+
+    if page == None:
+        page = 1    
+    page = int(page)        
+
+
     serializer = OrderSerializer  (orders, many=True)
-    return Response(serializer.data) 
+    
+    return Response({'orders':serializer.data,'page':page, 'pages':paginator.num_pages}) 
 
 @api_view(['PUT'])
 @permission_classes([IsAdminUser])
