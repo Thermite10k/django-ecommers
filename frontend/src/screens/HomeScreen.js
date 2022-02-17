@@ -8,6 +8,7 @@ import Message from "../components/message";
 import Paginate from "../components/Paginate";
 import { useDispatch, useSelector } from "react-redux";
 import { listProducts } from "../actions/productActions.js";
+import ProductCarousel from "../components/ProductCarousel";
 function HomeScreen() {
   const dispatch = useDispatch();
   const productList = useSelector((state) => state.productList); //1  .productList is the reducer form the store.js
@@ -22,6 +23,8 @@ function HomeScreen() {
 
   return (
     <div>
+      {!keyword && <ProductCarousel />}
+
       <h1>Latest Products</h1>
 
       {loading ? (
